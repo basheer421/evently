@@ -1,5 +1,6 @@
 <x-app title="Register">
-    <div class="pt-4 flex justify-center items-center bg-amber-900">
-        <h1 class="font-bold font-sans">Register page</h1>
+    <x-logo />
+    <div class="pt-20 flex justify-center items-center">
+        <p class="font-bold font-sans text-3xl">Create an account</p>
     </div>
 </x-app>
