@@ -1,9 +1,8 @@
 <nav class="bg-white border-b border-gray-200">
     <div class="px-4 md:px-15 py-5 mx-auto">
         <div class="flex justify-between items-center">
-            <!-- Logo -->
             <div class="flex items-center space-x-2 gap-x-1.5">
-                <a href="#" class="flex items-center">
+                <a href=" {{ route('home') }} " class="flex items-center">
                     <img class="w-5 h-5" src="{{ asset('images/logos/evently-logo.svg') }}" alt="Evently Logo" />
                     <p class="font-bold ml-1.5">Evently</p>
                 </a>
@@ -11,9 +10,15 @@
 
             <!-- Desktop Menu -->
             <div class="hidden md:flex items-center space-x-10">
-                <a href="#" class="text-black hover:font-semibold transition-all duration-200">Register</a>
-                <a href="#" class="text-black hover:font-semibold transition-all duration-200">Login</a>
-                <a href="#" class="text-black hover:font-semibold transition-all duration-200">Home</a>
+                @auth
+                    <a href="{{ route('home') }}"
+                        class="text-black hover:font-semibold transition-all duration-200">Home</a>
+                @else
+                    <a href="{{ route('register') }}"
+                        class="text-black hover:font-semibold transition-all duration-200">Register</a>
+                    <a href="{{ route('login') }}"
+                        class="text-black hover:font-semibold transition-all duration-200">Login</a>
+                @endauth
             </div>
 
             <!-- Mobile menu button -->
@@ -34,12 +39,16 @@
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden mt-4 overflow-hidden transition-all duration-300 max-h-0">
             <div class="flex flex-col space-y-4 pb-3 pt-2">
-                <a href="#"
-                    class="text-black hover:font-semibold px-2 py-2 text-base transition-all duration-200 hover:bg-gray-50 rounded-lg">Register</a>
-                <a href="#"
-                    class="text-black hover:font-semibold px-2 py-2 text-base transition-all duration-200 hover:bg-gray-50 rounded-lg">Login</a>
-                <a href="#"
-                    class="text-black hover:font-semibold px-2 py-2 text-base transition-all duration-200 hover:bg-gray-50 rounded-lg">Home</a>
+                @auth
+                    <a href="{{ route('home') }}"
+                        class="text-black hover:font-semibold px-2 py-2 text-base transition-all duration-200 hover:bg-gray-50 rounded-lg">Home</a>
+                @else
+                    <a href="{{ route('register') }}"
+                        class="text-black hover:font-semibold px-2 py-2 text-base transition-all duration-200 hover:bg-gray-50 rounded-lg">Register</a>
+                    <a href="{{ route('login') }}"
+                        class="text-black hover:font-semibold px-2 py-2 text-base transition-all duration-200 hover:bg-gray-50 rounded-lg">Login</a>
+                @endauth
+
             </div>
         </div>
     </div>
