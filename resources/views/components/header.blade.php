@@ -13,12 +13,17 @@
                 @auth
                     <a href="{{ route('home') }}"
                         class="text-black hover:font-semibold transition-all duration-200">Home</a>
-                @else
-                    <a href="{{ route('register') }}"
-                        class="text-black hover:font-semibold transition-all duration-200">Register</a>
-                    <a href="{{ route('login') }}"
-                        class="text-black hover:font-semibold transition-all duration-200">Login</a>
-                @endauth
+                    <form action="{{ route('logout') }}" method="POST" class="inline">
+                        @csrf
+                        <button type="submit"
+                            class="text-black hover:font-semibold transition-all duration-200 hover:cursor-pointer">Log
+                            out</button>
+                    @else
+                        <a href="{{ route('register') }}"
+                            class="text-black hover:font-semibold transition-all duration-200">Register</a>
+                        <a href="{{ route('login') }}"
+                            class="text-black hover:font-semibold transition-all duration-200">Login</a>
+                    @endauth
             </div>
 
             <!-- Mobile menu button -->

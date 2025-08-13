@@ -12,11 +12,8 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function login() : View
+    public function login(): View
     {
-        if (Auth::check()) {
-            return view('pages.home', ['title' => 'Home']);
-        }
         return view('pages.login', ['title' => 'Login']);
     }
 
@@ -33,12 +30,10 @@ class AuthController extends Controller
         ]);
 
         $credentials = $request->only('email', 'password');
-
-        if (Auth::attempt($credentials)) {
-            return redirect()->route('home');
-        }
-
-        return back();
+        Auth::attempt($credentials, $request->filled('remember'));
+        return back()->withErrors([
+            'email' => 'Your email or password is incorrect.',
+        ])->withInput($request->only('email', 'remember'));
     }
 
     public function registerPost(Request $request): RedirectResponse
