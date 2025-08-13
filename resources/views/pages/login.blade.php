@@ -109,6 +109,7 @@
                     loginButton.textContent = 'Login';
                     arrowIconSpan.classList.remove('hidden');
                     arrowIcon.classList.remove('hidden');
+                    password.focus();
                 } else {
                     // Password validation step
                     let isValid = true;
@@ -129,7 +130,6 @@
             // Clear error when user types
             email.addEventListener('input', () => clearInputError(email));
             password.addEventListener('input', () => clearInputError(password));
-            passwordConfirmation.addEventListener('input', () => clearInputError(passwordConfirmation));
         }
 
         if (arrowIcon) {
@@ -143,7 +143,6 @@
 
                     // Clear any existing errors
                     clearInputError(password);
-                    clearInputError(passwordConfirmation);
                 }
             });
         }
