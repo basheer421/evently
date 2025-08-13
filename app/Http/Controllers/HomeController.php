@@ -11,7 +11,7 @@ class HomeController extends Controller
     {
         return view('pages.home', [
             'title' => 'Home',
-            'user' => Auth::user()
+            'user' => $request->user(),
         ]);
     }
 }

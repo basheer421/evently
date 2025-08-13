@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -57,7 +58,7 @@ class AuthController extends Controller
     public function logout(): RedirectResponse
     {
         Auth::logout();
-        return redirect()->route('home');
+        return redirect()->route('login');
     }
 
     public function resetPassword(): View
@@ -69,25 +70,39 @@ class AuthController extends Controller
     {
         session(['role' => $request->input('role', 'user')]);
         $role = session('role', 'user');
-        dd($role);
         return Socialite::driver('google')->redirect();
     }
 
     public function handleGoogleCallback(): RedirectResponse
     {
-        $role = session('role', 'user');
-        $googleUser = Socialite::driver('google')->user();
-        $user = User::updateOrCreate(
-            ['google_id' => $googleUser->getId()],
-            [
-                'name' => $googleUser->getName(),
-                'google_token' => $googleUser->token,
-                'google_refresh_token' => $googleUser->refreshToken,
-                'password' => Hash::make(uniqid()),
-                'role' => $role,
-            ]
-        );
-        Auth::login($user);
-        return redirect()->route('home');
+        try {
+            $googleUser = Socialite::driver('google')->user();
+            $role = session('role', 'user');
+            $user = User::where('email', $googleUser->getEmail())->first();
+
+            if ($user) {
+                $user->update([
+                    'google_id' => $googleUser->getId(),
+                    'google_token' => $googleUser->token,
+                    'google_refresh_token' => $googleUser->refreshToken,
+                ]);
+            } else {
+                $user = User::create([
+                    'email' => $googleUser->getEmail(),
+                    'name' => $googleUser->getName(),
+                    'google_id' => $googleUser->getId(),
+                    'google_token' => $googleUser->token,
+                    'google_refresh_token' => $googleUser->refreshToken,
+                    'password' => Hash::make(uniqid()),
+                    'role' => $role,
+                ]);
+            }
+
+            Auth::login($user);
+            return redirect()->route('home');
+        } catch (Exception $e) {
+            return redirect()->route('login')
+                ->withErrors(['google' => 'Google authentication failed. Please try again.']);
+        }
     }
 }
