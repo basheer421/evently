@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Middleware\AuthMiddleware;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
@@ -63,5 +63,31 @@ class AuthController extends Controller
     public function resetPassword(): View
     {
         return view('pages.reset-password', ['title' => 'Reset Password']);
+    }
+
+    public function googleRedirect(Request $request): RedirectResponse
+    {
+        session(['role' => $request->input('role', 'user')]);
+        $role = session('role', 'user');
+        dd($role);
+        return Socialite::driver('google')->redirect();
+    }
+
+    public function handleGoogleCallback(): RedirectResponse
+    {
+        $role = session('role', 'user');
+        $googleUser = Socialite::driver('google')->user();
+        $user = User::updateOrCreate(
+            ['google_id' => $googleUser->getId()],
+            [
+                'name' => $googleUser->getName(),
+                'google_token' => $googleUser->token,
+                'google_refresh_token' => $googleUser->refreshToken,
+                'password' => Hash::make(uniqid()),
+                'role' => $role,
+            ]
+        );
+        Auth::login($user);
+        return redirect()->route('home');
     }
 }

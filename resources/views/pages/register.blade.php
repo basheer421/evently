@@ -2,7 +2,8 @@
     <div class="pt-10 md:pt-20 flex flex-col justify-center items-center px-4 md:px-0 pb-10">
         <div class="flex items-center gap-5">
             <x-iconic-arrow-left class="hidden w-6 h-6 text-gray-500 hover:cursor-pointer" id="arrow-icon" />
-            <p class="font-bold font-sans text-2xl md:text-3xl text-center">Create an account</p>
+            <p class="font-bold font-sans text-2xl md:text-3xl text-center">Create an 
+            @if (request()->get('role', 'user') === 'organizer') organizer @else user @endif account</p>
             <span id="arrow-icon-span" class="hidden"></span>
         </div>
         <form id="register-form" class="w-full md:w-1/3 pt-6 md:pt-8 max-w-md" method="post"
@@ -46,10 +47,12 @@
             <x-googleButton />
         </div>
 
-        <p class="pt-6 md:pt-8 text-gray-500 text-center">Want to be an organizer? <a href="?role=organizer"
-                class="underline">Click
-                here</a>
-        </p>
+        @if (request()->get('role', 'user') !== 'organizer')
+            <p class="pt-6 md:pt-8 text-gray-500 text-center">Want to be an organizer? <a href="?role=organizer"
+                    class="underline">Click
+                    here</a>
+            </p>
+        @endif
 
         <p class="pt-6 md:pt-8 text-gray-500 text-sm md:text-base text-center max-w-md">By continuing, you agree to
             Evently's <a href="terms" class="underline">Terms of
