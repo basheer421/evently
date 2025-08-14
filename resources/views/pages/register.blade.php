@@ -25,14 +25,25 @@
             </div>
             <div id="password-wrapper" class="hidden">
                 <div class="flex flex-col space-y-4">
-                    <x-textInput class="" id="password" type="password" name="password" placeholder="Password" />
-                    <x-textInput class="" id="password_confirmation" type="password" name="password_confirmation"
-                        placeholder="Confirm Password" />
+                    <div class="relative password-class">
+                        <x-textInput class="" id="password" type="password" name="password" placeholder="Password" />
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                            <x-iconic-eye class="w-5 h-5 text-gray-500 cursor-pointer eye-on" />
+                            <x-iconic-eye-off class="w-5 h-5 text-gray-500 cursor-pointer eye-off hidden" />
+                        </div>
+                    </div>
+                    <div class="relative password-class">
+                        <x-textInput class="" id="password_confirmation" type="password" name="password_confirmation"
+                            placeholder="Confirm Password" />
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                            <x-iconic-eye class="w-5 h-5 text-gray-500 cursor-pointer eye-on" />
+                            <x-iconic-eye-off class="w-5 h-5 text-gray-500 cursor-pointer eye-off hidden" />
+                        </div>
+                    </div>
                 </div>
 
             </div>
             <div class="pt-6 ">
-                {{-- <x-button id="register-button"> Continue with email </x-button> --}}
                 <button id="register-button"
                     class="bg-blue-500 text-white p-4 rounded-3xl w-full hover:bg-blue-600 hover:cursor-pointer transition duration-200 h-12 flex justify-center items-center font-semibold">
                     Continue with email
@@ -61,6 +72,26 @@
     </div>
 
     <script>
+        const passwordClasses = document.querySelectorAll('.password-class');
+        passwordClasses.forEach((el) => {
+            const eyeOn = el.querySelector('.eye-on');
+            const eyeOff = el.querySelector('.eye-off');
+            const password = el.querySelector('input[type="password"]');
+
+            eyeOn.addEventListener('click', function() {
+                password.type = 'text';
+                eyeOn.classList.add('hidden');
+                eyeOff.classList.remove('hidden');
+            });
+
+            eyeOff.addEventListener('click', function() {
+                password.type = 'password';
+                eyeOn.classList.remove('hidden');
+                eyeOff.classList.add('hidden');
+            });
+        });
+        
+
         const emailWrapper = document.getElementById('email-wrapper');
         const email = document.getElementById('email');
         const passwordWrapper = document.getElementById('password-wrapper');

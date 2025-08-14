@@ -24,9 +24,14 @@
             </div>
             <div id="password-wrapper" class="hidden">
                 <div class="flex flex-col space-y-4">
-                    <x-textInput class="" id="password" type="password" name="password" placeholder="Password" />
+                    <div class="relative">
+                        <x-textInput class="" id="password" type="password" name="password" placeholder="Password" />
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                            <x-iconic-eye id="eye-on" class="w-5 h-5 text-gray-500 cursor-pointer" data-target="password" />
+                            <x-iconic-eye-off id="eye-off" class="w-5 h-5 text-gray-500 cursor-pointer hidden" data-target="password" />
+                        </div>
+                    </div>
                 </div>
-
             </div>
             <div class="pt-6 ">
                 <button id="login-button"
@@ -50,10 +55,25 @@
     </div>
 
     <script>
+        const eyeOn = document.getElementById('eye-on');
+        const eyeOff = document.getElementById('eye-off');
+        const password = document.getElementById('password');
+
+        eyeOn.addEventListener('click', function() {
+            password.type = 'text';
+            eyeOn.classList.add('hidden');
+            eyeOff.classList.remove('hidden');
+        });
+
+        eyeOff.addEventListener('click', function() {
+            password.type = 'password';
+            eyeOn.classList.remove('hidden');
+            eyeOff.classList.add('hidden');
+        });
+
         const emailWrapper = document.getElementById('email-wrapper');
         const email = document.getElementById('email');
         const passwordWrapper = document.getElementById('password-wrapper');
-        const password = document.getElementById('password');
         const loginButton = document.getElementById('login-button');
         const form = document.getElementById('login-form');
         const arrowIcon = document.getElementById('arrow-icon');
