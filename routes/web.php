@@ -1,14 +1,18 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ExploreController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\SearchController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/reset-password', [AuthController::class, 'resetPassword'])->name('reset-password');
+    Route::get('/explore', [ExploreController::class, 'index'])->name('explore');
+    Route::get('/search', [SearchController::class, 'index'])->name('search');
 });
 
 Route::middleware(['guest'])->group(function () {

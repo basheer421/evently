@@ -1,18 +1,19 @@
 <nav class="bg-white border-b border-gray-200">
     <div class="px-4 md:px-15 py-5 mx-auto">
         <div class="flex justify-between items-center">
-            <div class="flex items-center space-x-2 gap-x-1.5">
+            <div class="flex items-center space-x-10">
                 <a href=" {{ route('home') }} " class="flex items-center">
                     <img class="w-5 h-5" src="{{ asset('images/logos/evently-logo.svg') }}" alt="Evently Logo" />
                     <p class="font-bold ml-1.5">Evently</p>
                 </a>
+                <a href="{{ route('explore') }}"
+                        class="text-black hover:font-semibold transition-all duration-200">Explore</a>
             </div>
 
             <!-- Desktop Menu -->
             <div class="hidden md:flex items-center space-x-10">
                 @auth
-                    <a href="{{ route('home') }}"
-                        class="text-black hover:font-semibold transition-all duration-200">Home</a>
+                    
                     <form action="{{ route('logout') }}" method="POST" class="inline">
                         @csrf
                         <button type="submit"
