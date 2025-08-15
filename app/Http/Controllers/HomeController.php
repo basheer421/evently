@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\XEvent;
+use App\Models\Xevent;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        $events = XEvent::where('start_time', '>=', now())
+        $events = Xevent::where('start_time', '>=', now())
             ->orderBy('start_time', 'asc')
             ->paginate(10);
         $categories = Category::paginate(10);
@@ -20,10 +20,5 @@ class HomeController extends Controller
             'events' => $events,
             'categories' => $categories,
         ]);
-    }
-
-    public function search(Request $request)
-    {
-        SearchController::search($request, 'home');
     }
 }
