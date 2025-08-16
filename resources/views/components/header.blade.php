@@ -19,6 +19,7 @@
                         <button type="submit"
                             class="text-black hover:font-semibold transition-all duration-200 hover:cursor-pointer">Log
                             out</button>
+                    </form>
                     @else
                         <a href="{{ route('register') }}"
                             class="text-black hover:font-semibold transition-all duration-200">Register</a>
@@ -46,8 +47,12 @@
         <div id="mobile-menu" class="hidden md:hidden mt-4 overflow-hidden transition-all duration-300 max-h-0">
             <div class="flex flex-col space-y-4 pb-3 pt-2">
                 @auth
-                    <a href="{{ route('home') }}"
-                        class="text-black hover:font-semibold px-2 py-2 text-base transition-all duration-200 hover:bg-gray-50 rounded-lg">Home</a>
+                    <form action="{{ route('logout') }}" method="POST" class="inline">
+                        @csrf
+                        <button type="submit"
+                            class="text-black hover:font-semibold px-2 py-2 text-base transition-all duration-200 hover:bg-gray-50 rounded-lg">Log
+                            out</button>
+                    </form>
                 @else
                     <a href="{{ route('register') }}"
                         class="text-black hover:font-semibold px-2 py-2 text-base transition-all duration-200 hover:bg-gray-50 rounded-lg">Register</a>
