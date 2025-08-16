@@ -79,7 +79,23 @@ class XeventFactory extends Factory
                     'Twitch Stream'
                 ])
                 : $this->faker->address,
-            'image_link' => $this->faker->optional(0.7)->imageUrl(800, 400, 'business', true, 'event'),
+            'image_link' => $this->faker->optional(0.7)->randomElement([
+                'https://picsum.photos/id/1/800/400',    // Nature/landscape
+                'https://picsum.photos/id/2/800/400',    // Architecture
+                'https://picsum.photos/id/3/800/400',    // Technology/office
+                'https://picsum.photos/id/4/800/400',    // Abstract/patterns
+                'https://picsum.photos/id/6/800/400',    // Nature/forest
+                'https://picsum.photos/id/8/800/400',    // Architecture/building
+                'https://picsum.photos/id/9/800/400',    // Technology/workspace
+                'https://picsum.photos/id/10/800/400',   // Nature/water
+                'https://picsum.photos/id/11/800/400',   // Abstract/art
+                'https://picsum.photos/id/13/800/400',   // Architecture/modern
+                'https://picsum.photos/id/15/800/400',   // Technology/devices
+                'https://picsum.photos/id/17/800/400',   // Nature/mountains
+                'https://picsum.photos/id/18/800/400',   // Abstract/geometric
+                'https://picsum.photos/id/20/800/400',   // Architecture/interior
+                'https://picsum.photos/id/21/800/400',   // Technology/equipment
+            ]),
             'organizer_id' => User::factory(),
         ];
     }
