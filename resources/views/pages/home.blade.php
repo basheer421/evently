@@ -27,12 +27,15 @@
                 
                 <!-- Search Bar -->
                 <div class="max-w-3xl mx-auto">
-                    <form action="{{ route('search') }}" method="GET" class="flex flex-col sm:flex-row gap-4">
-                        <div class="flex-1">
+                    <form action="{{ route('explore') }}" method="GET" class="flex flex-col sm:flex-row gap-4">
+                        <div class="flex-1 relative">
+                            <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
+                                <x-heroicon-s-magnifying-glass class="h-5 w-5 text-gray-500" />
+                            </div>
                             <input type="text" 
                                    name="query" 
                                    placeholder="Search for events, venues, or organizers..." 
-                                   class="w-full px-6 py-4 text-lg text-gray-900 bg-white rounded-full border-0 shadow-xl focus:ring-4 focus:ring-blue-300 focus:outline-none placeholder-gray-500">
+                                   class="w-full pl-14 pr-6 py-4 text-lg text-gray-900 bg-white rounded-full border-0 shadow-xl focus:ring-4 focus:ring-blue-300 focus:outline-none placeholder-gray-500">
                         </div>
                         <button type="submit" 
                                 class="px-10 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-full hover:from-blue-600 hover:to-blue-700 transform hover:scale-105 transition-all duration-200 shadow-xl whitespace-nowrap hover:cursor-pointer">
