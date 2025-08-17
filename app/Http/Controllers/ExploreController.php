@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class ExploreController extends Controller
 {
     public function index()
     {
-        return view('pages.explore');
+        $categories = Category::all();
+
+        return view('pages.explore', compact('categories'));
     }
 }
