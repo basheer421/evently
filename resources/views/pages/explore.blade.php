@@ -171,11 +171,6 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div id="events-container">
                     <x-events-grid :events="$events" />
-                    
-                    <!-- Pagination -->
-                    <div class="mt-8 flex justify-center">
-                        {{ $events->links() }}
-                    </div>
                 </div>
             </div>
         </div>
@@ -202,7 +197,8 @@
                 date_from: dateFrom,
                 date_to: dateTo,
                 min_price: minPrice,
-                max_price: maxPrice
+                max_price: maxPrice,
+                page: 1  // Reset to first page when searching
             });
             
             fetch(`/explore?${params.toString()}`, {
@@ -214,6 +210,12 @@
             .then(response => response.json())
             .then(data => {
                 document.getElementById('events-container').innerHTML = data.html;
+                // Re-attach pagination event listeners after updating content
+                handlePaginationClicks();
+                
+                // Update browser URL without page refresh
+                const newUrl = `/explore?${params.toString()}`;
+                window.history.replaceState(null, '', newUrl);
             })
             .catch(error => {
                 console.error('Search error:', error);
@@ -227,7 +229,59 @@
                 clearTimeout(searchTimeout);
                 searchTimeout = setTimeout(performSearch, 500);
             });
+            
+            // Handle pagination clicks
+            handlePaginationClicks();
         });
+        
+        function handlePaginationClicks() {
+            document.addEventListener('click', function(event) {
+                // Check if the clicked element is a pagination link
+                if (event.target.closest('nav[aria-label="Pagination Navigation"] a')) {
+                    event.preventDefault();
+                    const link = event.target.closest('a');
+                    const url = new URL(link.href);
+                    
+                    // Get current search parameters
+                    const searchInput = document.getElementById('searchInput');
+                    const category = document.getElementById('selectedCategory').dataset.value || '';
+                    const sortBy = document.getElementById('selectedSort').dataset.value || 'asc';
+                    const dateFrom = document.getElementById('fromDate').value || '';
+                    const dateTo = document.getElementById('toDate').value || '';
+                    const minPrice = document.getElementById('minPrice').value || '';
+                    const maxPrice = document.getElementById('maxPrice').value || '';
+                    
+                    // Add current filters to pagination URL
+                    url.searchParams.set('query', searchInput.value);
+                    url.searchParams.set('category', category);
+                    url.searchParams.set('sort', sortBy);
+                    url.searchParams.set('date_from', dateFrom);
+                    url.searchParams.set('date_to', dateTo);
+                    url.searchParams.set('min_price', minPrice);
+                    url.searchParams.set('max_price', maxPrice);
+                    
+                    fetch(url.toString(), {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('events-container').innerHTML = data.html;
+                        // Re-attach pagination event listeners
+                        handlePaginationClicks();
+                        // Update browser URL
+                        window.history.replaceState(null, '', url.toString());
+                        // Scroll to top of results
+                        document.getElementById('events-container').scrollIntoView({ behavior: 'smooth' });
+                    })
+                    .catch(error => {
+                        console.error('Pagination error:', error);
+                    });
+                }
+            });
+        }
 
         function toggleFilters() {
             const filtersSection = document.getElementById('filtersSection');
