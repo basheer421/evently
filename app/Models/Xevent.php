@@ -21,4 +21,14 @@ class Xevent extends Model
         'image_link',
         'organizer_id',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
+
+    public function organizer()
+    {
+        return $this->belongsTo(User::class, 'organizer_id');
+    }
 }

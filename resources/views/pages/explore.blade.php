@@ -12,26 +12,25 @@
             
             <!-- Search Bar -->
             <div class="max-w-2xl mx-auto mb-12">
-                <form action="{{ route('explore') }}" method="GET">
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
-                            <x-heroicon-s-magnifying-glass class="h-5 w-5 text-gray-500" />
-                        </div>
-                        
-                        <div class="absolute inset-y-0 right-0 pr-6 flex items-center">
-                            <button type="button" onclick="toggleFilters()" class="text-black hover:text-gray-700 transition-colors duration-200 hover:cursor-pointer">
-                                <x-heroicon-s-adjustments-horizontal class="h-5 w-5" />
-                            </button>
-                        </div>
-                        
-                        <!-- Search Input -->
-                        <input type="text" 
-                               name="query" 
-                               placeholder="Search for events, venues, or organizers..." 
-                               value="{{ request('query') }}"
-                               class="w-full pl-14 pr-14 py-4 text-lg text-gray-900 bg-gray-100 rounded-full border-0 focus:ring-4 focus:ring-blue-300 focus:outline-none focus:bg-white placeholder-gray-500 transition-colors duration-200">
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
+                        <x-heroicon-s-magnifying-glass class="h-5 w-5 text-gray-500" />
                     </div>
-                </form>
+                    
+                    <div class="absolute inset-y-0 right-0 pr-6 flex items-center">
+                        <button type="button" onclick="toggleFilters()" class="text-black hover:text-gray-700 transition-colors duration-200 hover:cursor-pointer">
+                            <x-heroicon-s-adjustments-horizontal class="h-5 w-5" />
+                        </button>
+                    </div>
+                    
+                    <!-- Search Input -->
+                    <input type="text" 
+                           id="searchInput"
+                           name="query" 
+                           placeholder="Search for events, venues, or organizers..." 
+                           value="{{ request('query') }}"
+                           class="w-full pl-14 pr-14 py-4 text-lg text-gray-900 bg-gray-100 rounded-full border-0 focus:ring-4 focus:ring-blue-300 focus:outline-none focus:bg-white placeholder-gray-500 transition-colors duration-200">
+                </div>
             </div>
 
             <!-- Filters Section -->
@@ -45,7 +44,7 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
                             <div class="relative">
                                 <button type="button" onclick="toggleCategoryDropdown()" class="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-left focus:ring-2 focus:ring-blue-300 focus:border-transparent flex items-center justify-between">
-                                    <span class="text-gray-500" id="selectedCategory">All Categories</span>
+                                    <span class="text-gray-500" id="selectedCategory" data-value="">All Categories</span>
                                     <x-heroicon-s-chevron-down class="h-5 w-5 text-gray-400" />
                                 </button>
                                 
@@ -151,7 +150,7 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
                             <div class="relative">
                                 <button type="button" onclick="toggleSortDropdown()" class="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-left focus:ring-2 focus:ring-blue-300 focus:border-transparent flex items-center justify-between">
-                                    <span class="text-gray-500" id="selectedSort">Date (Ascending)</span>
+                                    <span class="text-gray-500" id="selectedSort" data-value="asc">Date (Ascending)</span>
                                     <x-heroicon-s-chevron-down class="h-5 w-5 text-gray-400" />
                                 </button>
                                 
@@ -168,13 +167,68 @@
                 </div>
             </div>
             
-            <div class="text-center py-12">
-                <p class="text-gray-500 text-lg">Events and filters will be added here...</p>
+            <!-- Events Grid Section -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div id="events-container">
+                    <x-events-grid :events="$events" />
+                    
+                    <!-- Pagination -->
+                    <div class="mt-8 flex justify-center">
+                        {{ $events->links() }}
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
+
     <script>
+        // Search debounce functionality
+        let searchTimeout;
+        
+        function performSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const category = document.getElementById('selectedCategory').dataset.value || '';
+            const sortBy = document.getElementById('selectedSort').dataset.value || 'asc';
+            const dateFrom = document.getElementById('fromDate').value || '';
+            const dateTo = document.getElementById('toDate').value || '';
+            const minPrice = document.getElementById('minPrice').value || '';
+            const maxPrice = document.getElementById('maxPrice').value || '';
+            
+            const params = new URLSearchParams({
+                query: searchInput.value,
+                category: category,
+                sort: sortBy,
+                date_from: dateFrom,
+                date_to: dateTo,
+                min_price: minPrice,
+                max_price: maxPrice
+            });
+            
+            fetch(`/explore?${params.toString()}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('events-container').innerHTML = data.html;
+            })
+            .catch(error => {
+                console.error('Search error:', error);
+            });
+        }
+
+        // Auto-search on input with debounce
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(performSearch, 500);
+            });
+        });
+
         function toggleFilters() {
             const filtersSection = document.getElementById('filtersSection');
             filtersSection.classList.toggle('hidden');
@@ -201,17 +255,23 @@
         }
 
         function selectCategory(value, text) {
-            document.getElementById('selectedCategory').textContent = text;
+            const selectedCategory = document.getElementById('selectedCategory');
+            selectedCategory.textContent = text;
+            selectedCategory.dataset.value = value;
             document.getElementById('categoryDropdown').classList.add('hidden');
-            // Store the value for form submission
-            // Can be connected to actual form processing later
+            // Trigger search when filter changes
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(performSearch, 300);
         }
 
         function selectSort(value, text) {
-            document.getElementById('selectedSort').textContent = text;
+            const selectedSort = document.getElementById('selectedSort');
+            selectedSort.textContent = text;
+            selectedSort.dataset.value = value;
             document.getElementById('sortDropdown').classList.add('hidden');
-            // Store the value for form submission
-            // Can be connected to actual form processing later
+            // Trigger search when sort changes
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(performSearch, 300);
         }
 
         function applyPriceRange() {
@@ -243,8 +303,9 @@
             // Close dropdown
             document.getElementById('priceRange').classList.add('hidden');
             
-            // Store values for form submission
-            // Can be connected to actual form processing later
+            // Trigger search when price filter changes
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(performSearch, 300);
         }
 
         function clearPriceRange() {
@@ -257,6 +318,10 @@
             
             // Close dropdown
             document.getElementById('priceRange').classList.add('hidden');
+            
+            // Trigger search when price filter is cleared
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(performSearch, 300);
         }
 
         function applyDateRange() {
@@ -289,6 +354,10 @@
             
             // Close dropdown
             document.getElementById('datePicker').classList.add('hidden');
+            
+            // Trigger search when date filter changes
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(performSearch, 300);
         }
 
         function clearDateRange() {
@@ -301,6 +370,10 @@
             
             // Close dropdown
             document.getElementById('datePicker').classList.add('hidden');
+            
+            // Trigger search when date filter is cleared
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(performSearch, 300);
         }
 
         function selectQuickDate(period) {

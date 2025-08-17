@@ -70,28 +70,7 @@
                 <div class="overflow-x-auto scrollbar-hide">
                     <div class="flex space-x-6 pb-4" style="width: max-content;">
                         @foreach($events->take(12) as $event)
-                            <div class="flex-shrink-0 w-80 bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer">
-                                <!-- Event Image -->
-                                <div class="relative h-48 overflow-hidden">
-                                    @if($event->image_link)
-                                        <img src="{{ $event->image_link }}" 
-                                             alt="{{ $event->title }}"
-                                             class="w-full h-full object-cover">
-                                    @else
-                                        <div class="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
-                                            <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                            </svg>
-                                        </div>
-                                    @endif
-                                </div>
-                                
-                                <!-- Event Content -->
-                                <div class="p-6">
-                                    <h3 class="text-xl font-bold text-black mb-3 line-clamp-2">{{ $event->title }}</h3>
-                                    <p class="text-gray-500 text-sm line-clamp-3 leading-relaxed">{{ $event->description }}</p>
-                                </div>
-                            </div>
+                            <x-event-card :event="$event" />
                         @endforeach
                     </div>
                 </div>
